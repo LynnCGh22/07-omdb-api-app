@@ -17,18 +17,27 @@ searchForm.addEventListener('submit', async (e) => {
   movieResults.innerHTML = '<p class="no-results">Searching...</p>';
   try {
     const res = await fetch(`https://www.omdbapi.com/?apikey=${apiKey}&s=${encodeURIComponent(query)}`);
+    
+    // Check if HTTP response is OK
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+
     const data = await res.json();
 
+    // Check OMDb API response
     if (data.Response === "True") {
       renderMovies(data.Search);
     } else {
       movieResults.innerHTML = `<p class="no-results">No results found for "${query}".</p>`;
     }
+
   } catch (err) {
-    console.error(err);
-    movieResults.innerHTML = `<p class="no-results">Error fetching movies. Try again later.</p>`;
+    console.error('Fetch error details:', err);
+    movieResults.innerHTML = `<p class="no-results">Oops! Something went wrong while fetching movies. Please try again later.</p>`;
   }
 });
+
 
 // Render search results
 function renderMovies(movies) {
