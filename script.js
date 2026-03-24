@@ -30,6 +30,7 @@ searchForm.addEventListener('submit', async (e) => {
   }
 });
 
+// Render search results
 function renderMovies(movies) {
   movieResults.innerHTML = '';
   movies.forEach(movie => {
@@ -52,13 +53,16 @@ function renderMovies(movies) {
   });
 }
 
+// Add or remove movie from watchlist
 function toggleWatchlist(movie, button) {
-  const index = watchlist.findIndex(m => m.imdbID === movie.imdbID);
-  if (index > -1) {
-    watchlist.splice(index, 1);
+  const exists = watchlist.some(m => m.imdbID === movie.imdbID);
+  if (exists) {
+    // Remove from watchlist
+    watchlist = watchlist.filter(m => m.imdbID !== movie.imdbID);
     button.textContent = 'Add to Watchlist';
     button.classList.remove('btn-remove');
   } else {
+    // Add to watchlist
     watchlist.push(movie);
     button.textContent = 'Remove from Watchlist';
     button.classList.add('btn-remove');
@@ -67,12 +71,14 @@ function toggleWatchlist(movie, button) {
   renderWatchlist();
 }
 
+// Render watchlist
 function renderWatchlist() {
   watchlistDiv.innerHTML = '';
   if (watchlist.length === 0) {
     watchlistDiv.innerHTML = 'Your watchlist is empty. Search for movies to add!';
     return;
   }
+
   watchlist.forEach(movie => {
     const card = document.createElement('div');
     card.className = 'movie-card';
@@ -85,12 +91,15 @@ function renderWatchlist() {
       </div>
     `;
     const btn = card.querySelector('button');
+
+    // Remove button functionality
     btn.addEventListener('click', () => {
       watchlist = watchlist.filter(m => m.imdbID !== movie.imdbID);
       localStorage.setItem('watchlist', JSON.stringify(watchlist));
       renderWatchlist();
-      // Also update search results button if visible
-      const searchCard = Array.from(movieResults.children).find(c => 
+
+      // Update search results button if visible
+      const searchCard = Array.from(movieResults.children).find(c =>
         c.querySelector('.movie-title').textContent === movie.Title
       );
       if (searchCard) {
@@ -99,6 +108,7 @@ function renderWatchlist() {
         searchBtn.classList.remove('btn-remove');
       }
     });
+
     watchlistDiv.appendChild(card);
   });
 }
