@@ -121,30 +121,6 @@ searchForm.addEventListener('submit', async (e) => {
   }
 });
 
-
-// Render search results
-function renderMovies(movies) {
-  movieResults.innerHTML = '';
-  movies.forEach(movie => {
-    const isInWatchlist = watchlist.some(w => w.imdbID === movie.imdbID);
-    const card = document.createElement('div');
-    card.className = 'movie-card';
-    card.innerHTML = `
-      <img class="movie-poster" src="${movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/300x450?text=No+Image'}" alt="${movie.Title}">
-      <div class="movie-info">
-        <h3 class="movie-title">${movie.Title}</h3>
-        <p class="movie-year">${movie.Year}</p>
-        <button class="btn ${isInWatchlist ? 'btn-remove' : ''}">
-          ${isInWatchlist ? 'Remove from Watchlist' : 'Add to Watchlist'}
-        </button>
-      </div>
-    `;
-    const btn = card.querySelector('button');
-    btn.addEventListener('click', () => toggleWatchlist(movie, btn));
-    movieResults.appendChild(card);
-  });
-}
-
 // Add or remove movie from watchlist
 function toggleWatchlist(movie, button) {
   const exists = watchlist.some(m => m.imdbID === movie.imdbID);
@@ -199,6 +175,19 @@ function renderWatchlist() {
         searchBtn.textContent = 'Add to Watchlist';
         searchBtn.classList.remove('btn-remove');
       }
+      card.innerHTML = `
+        <img class="movie-poster" src="${movie.Poster !== 'N/A' ? movie.Poster : 'https://via.placeholder.com/300x450?text=No+Image'}" alt="${movie.Title}">
+        
+        <div class="movie-info">
+          <h3 class="movie-title">${movie.Title}</h3>
+          <p class="movie-year">${movie.Year}</p>
+
+          <div style="display:flex; gap:8px;">
+            <button class="btn-details">Details</button>
+            <button class="btn btn-remove">Remove from Watchlist</button>
+          </div>
+        </div>
+      `;
     });
 
     watchlistDiv.appendChild(card);
